@@ -79,10 +79,10 @@
       notify:
         - dpkg-reconfigure
       tags: keyboard
-    - name: Add vagrant to groups
+    - name: Add user to groups
       ansible.builtin.user:
         shell: /usr/bin/zsh
-        name: vagrant
+        name: "{{ ansible_user_id }}"
         groups: docker,libvirt
         append: yes
     - name: Get arkade
@@ -90,47 +90,23 @@
       become: false
     - name: Check swap State
       ansible.builtin.stat:
-        path: /home/vagrant/.oh-my-zsh
+        path: "/home/{{ ansible_user_id }}/.oh-my-zsh"
       register: ohmyzsh_file_check
     - name: Get Oh my zsh
       become: false
       ansible.builtin.shell: curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | sh
       tags: zsh
       when: not ohmyzsh_file_check.stat.exists
-    - name: tools with arkade get
-      ansible.builtin.shell: ark get "{{item}}"
-      loop:
-        - buildx
-        - docker-compose
-        - helm
-        - kubectl
-        - hugo
-        - jq
-        - k9s
-        - kail
-        - kind
-        - krew
-        - kubectx
-        - kubens
-        - kustomize
-        - minikube
-        - popeye
-        - polaris
-        - stern
-        - tfsec
-        - trivy
-        - yq
-      become: false
     - name: uncomment PATH
       ansible.builtin.lineinfile:
-        path: /home/vagrant/.zshrc
+        path: "/home/{{ ansible_user_id }}/.zshrc"
         regexp: '^# export PATH.*$'
         line: 'export PATH=$HOME/.arkade/bin:$HOME/.local/bin:$PATH'
       become: false
       tags: path
     - name: add PATH
       ansible.builtin.lineinfile:
-        path: /home/vagrant/.zshrc
+        path: "/home/{{ ansible_user_id }}/.zshrc"
         state: present
         regexp: '^# export (PATH=\")({{ item }}:)?((?(2).*?(?!(?:.\"))|.*?(?!(?:{{ item }}))))(:{{ item }})?((?(4).*|\"))'
         line: '\1\3:{{ item }}\5'
@@ -142,7 +118,7 @@
       become: false
     - name: Install pip packages
       ansible.builtin.pip:
-        requirements: /home/vagrant/my-vagrant-box/requirements.yml
+        requirements: "/home/{{ ansible_user_id }}/my-vagrant-box/requirements.yml"
       become: false
       tags: pip
     - name: Install vagrant plugin libvirt
@@ -152,10 +128,10 @@
     - name: Install hadolint
       ansible.builtin.uri:
         url: https://github.com/hadolint/hadolint/releases/download/v2.8.0/hadolint-Linux-x86_64
-        dest: /home/vagrant/.local/bin/hadolint
+        dest: "/home/{{ ansible_user_id }}/.local/bin/hadolint"
         mode: 0755
-        owner: vagrant
-        group: vagrant
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_real_group_id }}"
         status_code: [200,304]
       tags: hadolint
     - name: Install regula
@@ -164,14 +140,40 @@
     - name: install Azure cli
       ansible.builtin.shell: curl -sL https://aka.ms/InstallAzureCLIDeb | bash
     - name: Install asdf
-      ansible.builtin.shell: |
-        git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.9.0
+      ansible.builtin.git:
+        repo: 'https://github.com/asdf-vm/asdf.git'
+        dest: "/home/{{ ansible_user_id }}/.asdf"
+        version: v0.9.0
       tags: asdf
     - name: Add asdf to .zshrc
       ansible.builtin.lineinfile:
-        path: /home/vagrant/.zshrc
+        path: "/home/{{ ansible_user_id }}/.zshrc"
         regexp: '^. $HOME/.asdf/asdf.sh$'
         line: '. $HOME/.asdf/asdf.sh'
+      tags: asdf
+    - name: tools with arkade get
+      ansible.builtin.shell: asdf plugin add "{{item}}" || true
+      loop:
+        - docker-compose-v1
+        - helm
+        - kubectl
+        - gohugo
+        - jq
+        - k9s
+        - kind
+        - krew
+        - kubectx
+        - kubens
+        - kustomize
+        - minikube
+        - popeye
+        - polaris
+        - stern
+        - tfsec
+        - tflint
+        - trivy
+        - yq
+      become: false
       tags: asdf
 
   handlers:
