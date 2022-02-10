@@ -1,0 +1,85 @@
+---
+- hosts: localhost
+  connection: localhost
+  gather_facts: true
+  become: true
+  tasks:
+
+    - name: Add Docker GPG key
+      ansible.builtin.apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+    - name: Add Hashicorp GPG key
+      ansible.builtin.apt_key:
+        url: https://apt.releases.hashicorp.com/gpg
+    - name: Add Docker repository
+      ansible.builtin.apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
+        state: present
+        update_cache: false
+    - name: Add Hashicorp repository
+      ansible.builtin.apt_repository:
+        repo: deb [arch=amd64] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main
+        state: present
+        update_cache: false
+    - name: Install Packages
+      ansible.builtin.apt:
+        name:
+          - qemu-kvm
+          - libvirt-daemon-system
+          - vagrant
+          - terraform
+          - nomad
+          - vault
+          - docker-ce
+          - ksmtuned
+          - packer
+          - zsh
+        update_cache: true
+    - name: Add vagrant to groups
+      ansible.builtin.user:
+        shell: /usr/bin/zsh
+        name: vagrant
+        groups: docker,libvirt
+        append: yes
+    - name: Get arkade
+      ansible.builtin.shell: curl -SLfs https://get.arkade.dev | sudo sh
+    - name: Get Oh my zsh
+      ansible.builtin.shell: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    - name: tools with arkade get
+      ansible.builtin.shell: ark get "{{item}}"
+      loop:
+        - buildx
+        - docker-compose
+        - helm
+        - kubectl
+        - hugo
+        - jq
+        - k9s
+        - kail
+        - kind
+        - krew
+        - kubectx
+        - kubens
+        - kustomize
+        - minikube
+        - popeye
+        - polaris
+        - stern
+        - tfsec
+        - trivy
+        - yq
+      become: false
+    # - name: install Tools with pip
+
+
+    - name: add PATH
+      ansible.builtin.lineinfile:
+        path: /home/vagrant/.profile
+        state: present
+        regexp: '^(PATH=\")({{ item }}:)?((?(2).*?(?!(?:.\"))|.*?(?!(?:{{ item }}))))(:{{ item }})?((?(4).*|\"))'
+        line: '\1\3:{{ item }}\5'
+        backrefs: yes
+      loop:
+        - "/home/vagrant/.arkade/bin"
+        - "/home/vagrant/.local/bin"
+      tags: path
