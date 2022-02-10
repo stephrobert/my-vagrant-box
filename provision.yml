@@ -5,23 +5,26 @@
   become: true
   vars:
     devops_tools:
+      - { name: direnv, version: 2.30.3 }
       - { name: docker-compose-v1, version: 1.29.2 }
-      - { name: helm, version: latest }
-      - { name: kubectl, version: latest }
-      - { name: gohugo, version: latest }
-      - { name: jq, version: latest }
-      - { name: k9s, version: latest }
-      - { name: kind, version: latest }
-      - { name: krew, version: latest }
-      - { name: kubectx, version: latest }
-      - { name: kustomize, version: latest }
-      - { name: minikube, version: latest }
-      - { name: popeye, version: latest }
-      - { name: polaris, version: latest }
-      - { name: tfsec, version: latest }
-      - { name: tflint, version: latest }
-      - { name: trivy, version: latest }
-      - { name: yq, version: latest }
+      - { name: helm, version: 3.8.0 }
+      - { name: kubectl, version: 1.23.3 }
+      - { name: gohugo, version: 0.92.1 }
+      - { name: hadolint, version: v2.8.0 }
+      - { name: jq, version: 1.6 }
+      - { name: k9s, version: 0.25.18 }
+      - { name: kind, version: 0.11.1 }
+      - { name: krew, version: 0.4.3 }
+      - { name: kubectx, version: 0.9.4 }
+      - { name: kustomize, version: 4.5.2 }
+      - { name: minikube, version: 1.25.1 }
+      - { name: popeye, version: v0.9.8 }
+      - { name: polaris, version: 5.0.0 }
+      - { name: tekton-cli, version: 0.22.0 }
+      - { name: tfsec, version: 1.1.4 }
+      - { name: tflint, version: 0.34.1 }
+      - { name: trivy, version: 0.23.0 }
+      - { name: yq, version: 4.19.1 }
 
   tasks:
     - name: Check swap State
@@ -145,15 +148,6 @@
       ansible.builtin.shell: vagrant plugin install vagrant-libvirt
       become: false
       tags: vagrant
-    - name: Install hadolint
-      ansible.builtin.uri:
-        url: https://github.com/hadolint/hadolint/releases/download/v2.8.0/hadolint-Linux-x86_64
-        dest: "/home/{{ ansible_user_id }}/.local/bin/hadolint"
-        mode: 0755
-        owner: "{{ ansible_user_id }}"
-        group: "{{ ansible_real_group_id }}"
-        status_code: [200,304]
-      tags: hadolint
     - name: Install regula
       ansible.builtin.shell: wget https://github.com/fugue/regula/releases/download/v2.2.0/regula_2.2.0_Linux_x86_64.tar.gz -O - | sudo tar -xz -C /usr/local/bin
       tags: regula
@@ -171,18 +165,21 @@
         regexp: '^. $HOME/.asdf/asdf.sh$'
         line: '. $HOME/.asdf/asdf.sh'
       tags: asdf
-    - name: tools with asdf
+    - name: Add plugin asdf
       ansible.builtin.shell: "asdf plugin add {{ item.name }} || true"
       with_items: "{{ devops_tools }}"
       become: false
       tags: asdf
-    - name: tools with asdf
+    - name: Install Tools with asdf
       ansible.builtin.shell: "asdf install {{ item.name }} {{ item.version }}"
       with_items: "{{ devops_tools }}"
       become: false
       tags: asdf
-
-
+    - name: Define global version asdf
+      ansible.builtin.shell: "asdf global {{ item.name }} {{ item.version }}"
+      with_items: "{{ devops_tools }}"
+      become: false
+      tags: asdf
   handlers:
     - name: dpkg-reconfigure
       shell: |
