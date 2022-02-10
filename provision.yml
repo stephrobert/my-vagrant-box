@@ -33,7 +33,6 @@
           - docker-ce
           - ksmtuned
           - packer
-          - zsh
         update_cache: true
     - name: Add vagrant to groups
       ansible.builtin.user:
