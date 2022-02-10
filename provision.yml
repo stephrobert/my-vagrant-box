@@ -4,7 +4,20 @@
   gather_facts: true
   become: true
   tasks:
-
+    - name: Check swap State
+      ansible.builtin.stat:
+        path: /swapfile
+      register: swap_file_check
+    - name: Umount swap | {{ inventory_hostname }}
+      ansible.posix.mount:
+        name: swap
+        fstype: swap
+        state: absent
+      when: swap_file_check.stat.exists
+    - name: Swap Off | {{ inventory_hostname }}
+      ansible.builtin.shell:
+        cmd: swapoff -a
+      when: ansible_swaptotal_mb > 0
     - name: Add Docker GPG key
       ansible.builtin.apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
@@ -33,7 +46,9 @@
           - docker-ce
           - ksmtuned
           - packer
+          - zsh
         update_cache: true
+      tags: packages
     - name: Add vagrant to groups
       ansible.builtin.user:
         shell: /usr/bin/zsh
@@ -42,8 +57,16 @@
         append: yes
     - name: Get arkade
       ansible.builtin.shell: curl -SLfs https://get.arkade.dev | sudo sh
+      become: false
+    - name: Check swap State
+      ansible.builtin.stat:
+        path: /home/vagrant/.oh-my-zsh
+      register: ohmyzsh_file_check
     - name: Get Oh my zsh
-      ansible.builtin.shell: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+      become: false
+      ansible.builtin.shell: curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | sh
+      tags: zsh
+      when: not ohmyzsh_file_check.stat.exists
     - name: tools with arkade get
       ansible.builtin.shell: ark get "{{item}}"
       loop:
@@ -68,17 +91,25 @@
         - trivy
         - yq
       become: false
-    # - name: install Tools with pip
-
-
+    - name: uncomment PATH
+      ansible.builtin.lineinfile:
+        path: /home/vagrant/.zshrc
+        regexp: '^# export PATH.*$'
+        line: 'export PATH=$HOME/.arkade/bin:$HOME/.local/bin:$PATH'
+      become: false
+      tags: path
     - name: add PATH
       ansible.builtin.lineinfile:
-        path: /home/vagrant/.profile
+        path: /home/vagrant/.zshrc
         state: present
-        regexp: '^(PATH=\")({{ item }}:)?((?(2).*?(?!(?:.\"))|.*?(?!(?:{{ item }}))))(:{{ item }})?((?(4).*|\"))'
+        regexp: '^# export (PATH=\")({{ item }}:)?((?(2).*?(?!(?:.\"))|.*?(?!(?:{{ item }}))))(:{{ item }})?((?(4).*|\"))'
         line: '\1\3:{{ item }}\5'
         backrefs: yes
       loop:
-        - "/home/vagrant/.arkade/bin"
-        - "/home/vagrant/.local/bin"
+        - "$HOME/.arkade/bin"
+        - "$HOME/.local/bin"
       tags: path
+      become: false
+    - name: Install pip packages
+      pip
+
