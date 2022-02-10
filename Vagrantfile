@@ -7,7 +7,6 @@ apt update -y
 apt dist-upgrade -y
 apt install python3-pip git -y
 pip3 install apt-select
-apt-select --country FR
 SCRIPT
 
 $script2 = <<-SCRIPT
