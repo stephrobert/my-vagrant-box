@@ -7,3 +7,5 @@ cookiecutter
 lastversion
 jc
 https://releases.ansible.com/ansible-tower/cli/ansible-tower-cli-latest.tar.gz
+google-auth
+awscli
