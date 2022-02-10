@@ -1,7 +1,9 @@
 ansible-builder
 ansible-lint
 ansible-runner
+ansible-navigator
 awxkit
 cookiecutter
 lastversion
 jc
+https://releases.ansible.com/ansible-tower/cli/ansible-tower-cli-latest.tar.gz
