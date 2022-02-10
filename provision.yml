@@ -3,6 +3,26 @@
   connection: localhost
   gather_facts: true
   become: true
+  vars:
+    devops_tools:
+      - { name: docker-compose-v1, version: 1.29.2 }
+      - { name: helm, version: latest }
+      - { name: kubectl, version: latest }
+      - { name: gohugo, version: latest }
+      - { name: jq, version: latest }
+      - { name: k9s, version: latest }
+      - { name: kind, version: latest }
+      - { name: krew, version: latest }
+      - { name: kubectx, version: latest }
+      - { name: kustomize, version: latest }
+      - { name: minikube, version: latest }
+      - { name: popeye, version: latest }
+      - { name: polaris, version: latest }
+      - { name: tfsec, version: latest }
+      - { name: tflint, version: latest }
+      - { name: trivy, version: latest }
+      - { name: yq, version: latest }
+
   tasks:
     - name: Check swap State
       ansible.builtin.stat:
@@ -151,30 +171,17 @@
         regexp: '^. $HOME/.asdf/asdf.sh$'
         line: '. $HOME/.asdf/asdf.sh'
       tags: asdf
-    - name: tools with arkade get
-      ansible.builtin.shell: asdf plugin add "{{item}}" || true
-      loop:
-        - docker-compose-v1
-        - helm
-        - kubectl
-        - gohugo
-        - jq
-        - k9s
-        - kind
-        - krew
-        - kubectx
-        - kubens
-        - kustomize
-        - minikube
-        - popeye
-        - polaris
-        - stern
-        - tfsec
-        - tflint
-        - trivy
-        - yq
+    - name: tools with asdf
+      ansible.builtin.shell: "asdf plugin add {{ item.name }} || true"
+      with_items: "{{ devops_tools }}"
       become: false
       tags: asdf
+    - name: tools with asdf
+      ansible.builtin.shell: "asdf install {{ item.name }} {{ item.version }}"
+      with_items: "{{ devops_tools }}"
+      become: false
+      tags: asdf
+
 
   handlers:
     - name: dpkg-reconfigure
