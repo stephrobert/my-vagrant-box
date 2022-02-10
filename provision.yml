@@ -57,6 +57,7 @@
           - ebtables
           - keyboard-configuration
           - console-setup
+          - language-pack-fr
         update_cache: true
       tags: packages
     - name: Change local to FR
@@ -66,20 +67,17 @@
       tags: local
     - name: configure keyboard
       ansible.builtin.copy:
-        src: files/keyboard
-        dest: /etc/default/keyboard
+        src: "files/{{ item }}"
+        dest: "/etc/default/{{ item }}"
         force: yes
         owner: root
         group: root
         mode: 0640
+      loop:
+        - keyboard
+        - locale
       notify:
-        - dpkg-reconfigure keyboard-configuration
-      tags: keyboard
-    - name: change locale to fr_FR
-      ansible.builtin.lineinfile:
-        path: /etc/default/locale
-        regexp: "^LANG="
-        line: LANG="fr_FR.UTF-8"
+        - dpkg-reconfigure
       tags: keyboard
     - name: Add vagrant to groups
       ansible.builtin.user:
@@ -169,6 +167,10 @@
       tags: regula
 
   handlers:
-    - name: dpkg-reconfigure keyboard-configuration
-      become: yes
-      command: /usr/sbin/dpkg-reconfigure -f noninteractive keyboard-configuration
+    - name: dpkg-reconfigure
+      shell: |
+        dpkg-reconfigure -f noninteractive keyboard-configuration && \
+        localectl set-locale LANG=fr_FR.UTF8 LANGUAGE=fr_FR.UTF8 && \
+        timedatectl set-timezone Europe/Paris && \
+        update-locale LANG=fr_FR.UTF-8
+
