@@ -33,15 +33,8 @@ Vagrant.configure("2") do |config|
         hyperv.enable_virtualization_extensions = true
         hyperv.linked_clone = true
     end
-	# config.vm.provision "file", source: "~/.ssh/id*", destination: "/home/vagrant/.ssh/"
-	#config.vm.provision "file", source: "server.crt", destination: "/tmp/"
-	#config.vm.provision "file", source: "NetworkManager.conf", destination: "/tmp/"
-	#config.vm.provision "file", source: "resolv.conf", destination: "/tmp/"
-	#config.vm.provision "file", source: "ssh-config", destination: "/tmp"
-	#config.vm.provision "file", source: "bashrc", destination: "/home/vagrant/.bashrc"
-	config.vm.provision "shell", inline: $script
-	config.vm.provision "shell", inline: $script2, privileged: false
-
-	config.vm.synced_folder ".", "/vagrant", disabled: true
+  config.vm.provision "shell", inline: $scriptc
+  config.vm.provision "shell", inline: $script2, privileged: false
+  config.vm.synced_folder ".", "/vagrant", disabled: true
 
 end
