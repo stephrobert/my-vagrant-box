@@ -47,6 +47,14 @@
           - ksmtuned
           - packer
           - zsh
+          - libvirt-clients
+          - libxslt-dev
+          - libxml2-dev
+          - libvirt-dev
+          - zlib1g-dev
+          - ruby-dev
+          - ruby-libvirt
+          - ebtables
         update_cache: true
       tags: packages
     - name: Add vagrant to groups
@@ -111,5 +119,7 @@
       tags: path
       become: false
     - name: Install pip packages
-      pip
-
+      ansible.builtin.pip:
+        requirements: /home/vagrant/my-vagrant-box/requirements.yml
+      become: false
+      tags: pip
