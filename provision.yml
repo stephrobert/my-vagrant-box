@@ -82,10 +82,7 @@
           - language-pack-fr
           - net-tools
           - vagrant
-          # - packer
-          # - terraform
-          # - nomad
-          # - vault
+          - zplug
         update_cache: true
       tags: packages
     - name: Change local to FR
@@ -172,6 +169,8 @@
         - ". $HOME/.asdf/asdf.sh"
         - "fpath=(${ASDF_DIR}/completions $fpath)"
         - "autoload -Uz compinit && compinit"
+        - "source /usr/share/zplug/init.zsh"
+        - "zplug load"
       tags: asdf
       become: false
     - name: Add plugin asdf
