@@ -4,6 +4,7 @@
   gather_facts: true
   become: true
   vars:
+    user: vagrant
     devops_tools:
       - { name: direnv, version: 2.30.3 }
       - { name: docker-compose-v1, version: 1.29.2 }
@@ -106,16 +107,17 @@
     - name: Add user to groups
       ansible.builtin.user:
         shell: /usr/bin/zsh
-        name: "{{ ansible_user_id }}"
+        name: "{{ user }}"
         groups: docker,libvirt
         append: yes
     - name: Get arkade
       ansible.builtin.shell: curl -SLfs https://get.arkade.dev | sudo sh
       become: false
-    - name: Check swap State
+    - name: Check zsh install
       ansible.builtin.stat:
-        path: "/home/{{ ansible_user_id }}/.oh-my-zsh"
+        path: "/home/{{ user }}/.oh-my-zsh"
       register: ohmyzsh_file_check
+      become: false
     - name: Get Oh my zsh
       become: false
       ansible.builtin.shell: curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | sh
@@ -123,14 +125,14 @@
       when: not ohmyzsh_file_check.stat.exists
     - name: uncomment PATH
       ansible.builtin.lineinfile:
-        path: "/home/{{ ansible_user_id }}/.zshrc"
+        path: "/home/{{ user }}/.zshrc"
         regexp: '^# export PATH.*$'
         line: 'export PATH=$HOME/.arkade/bin:$HOME/.local/bin:$PATH'
       become: false
       tags: path
     - name: add PATH
       ansible.builtin.lineinfile:
-        path: "/home/{{ ansible_user_id }}/.zshrc"
+        path: "/home/{{ user }}/.zshrc"
         state: present
         regexp: '^# export (PATH=\")({{ item }}:)?((?(2).*?(?!(?:.\"))|.*?(?!(?:{{ item }}))))(:{{ item }})?((?(4).*|\"))'
         line: '\1\3:{{ item }}\5'
@@ -142,7 +144,7 @@
       become: false
     - name: Install pip packages
       ansible.builtin.pip:
-        requirements: "/home/{{ ansible_user_id }}/my-vagrant-box/requirements.yml"
+        requirements: "/home/{{ user }}/my-vagrant-box/requirements.yml"
       become: false
       tags: pip
     - name: Install vagrant plugin libvirt
@@ -157,12 +159,12 @@
     - name: Install asdf
       ansible.builtin.git:
         repo: 'https://github.com/asdf-vm/asdf.git'
-        dest: "/home/{{ ansible_user_id }}/.asdf"
+        dest: "/home/{{ user }}/.asdf"
         version: v0.9.0
       tags: asdf
     - name: Add asdf to .zshrc
       ansible.builtin.lineinfile:
-        path: "/home/{{ ansible_user_id }}/.zshrc"
+        path: "/home/{{ user }}/.zshrc"
         regexp: '^. $HOME/.asdf/asdf.sh$'
         line: '. $HOME/.asdf/asdf.sh'
       tags: asdf
