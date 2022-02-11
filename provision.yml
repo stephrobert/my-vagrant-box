@@ -83,6 +83,7 @@
           - net-tools
           - vagrant
           - zplug
+          - fzf
         update_cache: true
       tags: packages
     - name: Change local to FR
@@ -170,6 +171,14 @@
         - "fpath=(${ASDF_DIR}/completions $fpath)"
         - "autoload -Uz compinit && compinit"
         - "source /usr/share/zplug/init.zsh"
+        - "zplug plugins/docker, from:oh-my-zsh"
+        - "zplug plugins/docker-compose, from:oh-my-zsh"
+        - "zplug plugins/git, from:oh-my-zsh"
+        - "zplug plugins/fzf, from:oh-my-zsh"
+        - "zplug romkatv/powerlevel10k, as:theme, depth:1"
+        - "zplug zsh-users/zsh-autosuggestions"
+        - "zplug zdharma/fast-syntax-highlighting, defer:2"
+        - "zplug install"
         - "zplug load"
       tags: asdf
       become: false
