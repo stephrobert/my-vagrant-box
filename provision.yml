@@ -140,6 +140,7 @@
       loop:
         - "$HOME/.arkade/bin"
         - "$HOME/.local/bin"
+        - "$HOME/.asdf/bin"
       tags: path
       become: false
     - name: Install pip packages
@@ -171,17 +172,17 @@
       tags: asdf
       become: false
     - name: Add plugin asdf
-      ansible.builtin.shell: ". $HOME/.asdf/asdf.sh && asdf plugin add {{ item.name }} || true"
+      ansible.builtin.shell: "zsh -lc 'asdf plugin add {{ item.name }}' || true"
       with_items: "{{ devops_tools }}"
       become: false
       tags: asdf
     - name: Install Tools with asdf
-      ansible.builtin.shell: ". $HOME/.asdf/asdf.sh && asdf install {{ item.name }} {{ item.version }}"
+      ansible.builtin.shell: "zsh -lc 'asdf install {{ item.name }} {{ item.version }}'"
       with_items: "{{ devops_tools }}"
       become: false
       tags: asdf
     - name: Define global version asdf
-      ansible.builtin.shell: ". $HOME/.asdf/asdf.sh && asdf global {{ item.name }} {{ item.version }}"
+      ansible.builtin.shell: "zsh -lc 'asdf global {{ item.name }} {{ item.version }}'"
       with_items: "{{ devops_tools }}"
       become: false
       tags: asdf
