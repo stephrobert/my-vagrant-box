@@ -26,7 +26,6 @@
       - { name: tflint, version: 0.34.1 }
       - { name: trivy, version: 0.23.0 }
       - { name: yq, version: 4.19.1 }
-
   tasks:
     - name: Check swap State
       ansible.builtin.stat:
@@ -172,17 +171,17 @@
       tags: asdf
       become: false
     - name: Add plugin asdf
-      ansible.builtin.shell: "zsh -lc 'asdf plugin add {{ item.name }}' || true"
+      ansible.builtin.shell: "zsh -lc '/home/{{ user }}/.asdf/bin/asdf plugin add {{ item.name }}' || true"
       with_items: "{{ devops_tools }}"
       become: false
       tags: asdf
     - name: Install Tools with asdf
-      ansible.builtin.shell: "zsh -lc 'asdf install {{ item.name }} {{ item.version }}'"
+      ansible.builtin.shell: "zsh -lc '/home/{{ user }}/.asdf/bin/asdf install {{ item.name }} {{ item.version }}'"
       with_items: "{{ devops_tools }}"
       become: false
       tags: asdf
     - name: Define global version asdf
-      ansible.builtin.shell: "zsh -lc 'asdf global {{ item.name }} {{ item.version }}'"
+      ansible.builtin.shell: "zsh -lc '/home/{{ user }}/.asdf/bin/asdf global {{ item.name }} {{ item.version }}'"
       with_items: "{{ devops_tools }}"
       become: false
       tags: asdf
