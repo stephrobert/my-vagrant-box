@@ -81,6 +81,7 @@
           - keyboard-configuration
           - console-setup
           - language-pack-fr
+          - net-tools
         update_cache: true
       tags: packages
     - name: Change local to FR
