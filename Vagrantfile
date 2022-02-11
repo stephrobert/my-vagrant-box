@@ -3,10 +3,10 @@
 
 $script = <<-SCRIPT
 echo I am provisioning...
+sudo sed 's@mirrors.kernel.org@ubuntu.lafibre.info@' -i /etc/apt/sources.list
 apt update -y
 apt dist-upgrade -y
 apt install python3-pip git -y
-pip3 install apt-select
 SCRIPT
 
 $script2 = <<-SCRIPT
