@@ -162,24 +162,26 @@
         dest: "/home/{{ user }}/.asdf"
         version: v0.9.0
       tags: asdf
+      become: false
     - name: Add asdf to .zshrc
       ansible.builtin.lineinfile:
         path: "/home/{{ user }}/.zshrc"
         regexp: '^. $HOME/.asdf/asdf.sh$'
         line: '. $HOME/.asdf/asdf.sh'
       tags: asdf
+      become: false
     - name: Add plugin asdf
-      ansible.builtin.shell: "asdf plugin add {{ item.name }} || true"
+      ansible.builtin.shell: ". $HOME/.asdf/asdf.sh && asdf plugin add {{ item.name }} || true"
       with_items: "{{ devops_tools }}"
       become: false
       tags: asdf
     - name: Install Tools with asdf
-      ansible.builtin.shell: "asdf install {{ item.name }} {{ item.version }}"
+      ansible.builtin.shell: ". $HOME/.asdf/asdf.sh && asdf install {{ item.name }} {{ item.version }}"
       with_items: "{{ devops_tools }}"
       become: false
       tags: asdf
     - name: Define global version asdf
-      ansible.builtin.shell: "asdf global {{ item.name }} {{ item.version }}"
+      ansible.builtin.shell: ". $HOME/.asdf/asdf.sh && asdf global {{ item.name }} {{ item.version }}"
       with_items: "{{ devops_tools }}"
       become: false
       tags: asdf
