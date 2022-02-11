@@ -19,12 +19,16 @@
       - { name: kubectx, version: 0.9.4 }
       - { name: kustomize, version: 4.5.2 }
       - { name: minikube, version: 1.25.1 }
+      - { name: nomad, version: 1.2.6 }
+      - { name: packer, version: 1.7.10 }
       - { name: popeye, version: v0.9.8 }
       - { name: polaris, version: 5.0.0 }
       - { name: tekton-cli, version: 0.22.0 }
+      - { name: terraform, version: 1.1.5 }
       - { name: tfsec, version: 1.1.4 }
       - { name: tflint, version: 0.34.1 }
       - { name: trivy, version: 0.23.0 }
+      - { name: vault, version: 1.9.3 }
       - { name: yq, version: 4.19.1 }
   tasks:
     - name: Check swap State
@@ -62,13 +66,8 @@
         name:
           - qemu-kvm
           - libvirt-daemon-system
-          - vagrant
-          - terraform
-          - nomad
-          - vault
           - docker-ce
           - ksmtuned
-          - packer
           - zsh
           - libvirt-clients
           - libxslt-dev
@@ -82,6 +81,11 @@
           - console-setup
           - language-pack-fr
           - net-tools
+          - vagrant
+          # - packer
+          # - terraform
+          # - nomad
+          # - vault
         update_cache: true
       tags: packages
     - name: Change local to FR
@@ -147,10 +151,6 @@
         requirements: "/home/{{ user }}/my-vagrant-box/requirements.yml"
       become: false
       tags: pip
-    - name: Install vagrant plugin libvirt
-      ansible.builtin.shell: vagrant plugin install vagrant-libvirt
-      become: false
-      tags: vagrant
     - name: Install regula
       ansible.builtin.shell: wget https://github.com/fugue/regula/releases/download/v2.2.0/regula_2.2.0_Linux_x86_64.tar.gz -O - | sudo tar -xz -C /usr/local/bin
       tags: regula
@@ -166,8 +166,12 @@
     - name: Add asdf to .zshrc
       ansible.builtin.lineinfile:
         path: "/home/{{ user }}/.zshrc"
-        regexp: '^. $HOME/.asdf/asdf.sh$'
-        line: '. $HOME/.asdf/asdf.sh'
+        regexp: "{{ item}}"
+        line: "{{ item}}"
+      with_items:
+        - ". $HOME/.asdf/asdf.sh"
+        - "fpath=(${ASDF_DIR}/completions $fpath)"
+        - "autoload -Uz compinit && compinit"
       tags: asdf
       become: false
     - name: Add plugin asdf
@@ -185,6 +189,11 @@
       with_items: "{{ devops_tools }}"
       become: false
       tags: asdf
+    - name: Install vagrant plugin libvirt
+      ansible.builtin.shell: vagrant plugin install vagrant-libvirt
+      become: false
+      tags: vagrant
+
   handlers:
     - name: dpkg-reconfigure
       shell: |
