@@ -32,7 +32,7 @@ Vagrant.configure("2") do |config|
         hyperv.enable_virtualization_extensions = true
         hyperv.linked_clone = true
     end
-  config.vm.provision "shell", inline: $scriptc
+  config.vm.provision "shell", inline: $script
   config.vm.provision "shell", inline: $script2, privileged: false
   config.vm.synced_folder ".", "/vagrant", disabled: true
 
