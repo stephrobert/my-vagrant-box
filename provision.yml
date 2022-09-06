@@ -69,6 +69,7 @@
       ansible.builtin.apt:
         name:
           - qemu-kvm
+          - btop
           - libvirt-daemon-system
           - docker-ce
           - ksmtuned
