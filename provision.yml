@@ -6,30 +6,34 @@
   vars:
     user: vagrant
     devops_tools:
+      - { name: awscli, version: 2.7.29 }
+      - { name: bat, version: 0.21.0 }
       - { name: direnv, version: 2.32.1 }
       - { name: docker-compose-v1, version: v2.9.0 }
-      - { name: helm, version: 3.9.2 }
-      - { name: kubectl, version: 1.24.3 }
-      - { name: gohugo, version: 0.101.0 }
+      - { name: helm, version: 3.9.4 }
+      - { name: kubectl, version: 1.25.0 }
+      - { name: gohugo, version: 0.102.3 }
       - { name: hadolint, version: 2.10.0 }
       - { name: jq, version: 1.6 }
-      - { name: k9s, version: 0.26.0 }
-      - { name: kind, version: 0.14.0 }
+      - { name: k9s, version: 0.26.3 }
+      - { name: kind, version: 0.15.0 }
       - { name: krew, version: 0.4.3 }
       - { name: kubectx, version: 0.9.4 }
-      - { name: kustomize, version: 4.5.6 }
-      - { name: minikube, version: 1.26.0 }
-      - { name: nomad, version: 1.3.2 }
-      - { name: packer, version: 1.8.2 }
+      - { name: kustomize, version: 4.5.7 }
+      - { name: minikube, version: 1.26.1 }
+      - { name: nomad, version: 1.3.5 }
+      - { name: packer, version: 1.8.3 }
       - { name: popeye, version: v0.10.1 }
       - { name: polaris, version: 7.0.1 }
-      - { name: tekton-cli, version: 0.25.0 }
-      - { name: terraform, version: 1.2.6 }
+      - { name: rclone, version: 1.59.1 }
+      - { name: tekton-cli, version: 0.26.0 }
+      - { name: terraform, version: 1.2.8 }
+      - { name: tflint, version: 0.39.3 }
       - { name: tfsec, version: 1.27.1 }
-      - { name: tflint, version: 0.39.1 }
-      - { name: trivy, version: 0.30.4 }
-      - { name: vault, version: 1.11.1 }
-      - { name: yq, version: 4.27.2 }
+      - { name: trivy, version: 0.31.3 }
+      - { name: vault, version: 1.11.3 }
+      - { name: yq, version: 4.27.3 }
+      - { name: exa, version: latest}
   tasks:
     - name: Check swap State
       ansible.builtin.stat:
@@ -82,8 +86,6 @@
           - language-pack-fr
           - net-tools
           - vagrant
-          - zplug
-          - fzf
         update_cache: true
       tags: packages
     - name: Change local to FR
@@ -95,7 +97,7 @@
       ansible.builtin.copy:
         src: "files/{{ item }}"
         dest: "/etc/default/{{ item }}"
-        force: yes
+        force: true
         owner: root
         group: root
         mode: 0640
@@ -109,11 +111,8 @@
       ansible.builtin.user:
         shell: /usr/bin/zsh
         name: "{{ user }}"
-        groups: docker,libvirt
-        append: yes
-    - name: Get arkade
-      ansible.builtin.shell: curl -SLfs https://get.arkade.dev | sudo sh
-      become: false
+        groups: docker,libvirt,kvm
+        append: true
     - name: Check zsh install
       ansible.builtin.stat:
         path: "/home/{{ user }}/.oh-my-zsh"
@@ -128,9 +127,39 @@
       ansible.builtin.lineinfile:
         path: "/home/{{ user }}/.zshrc"
         regexp: '^# export PATH.*$'
-        line: 'export PATH=$HOME/.arkade/bin:$HOME/.local/bin:$PATH'
+        line: 'export PATH=$HOME/.local/bin:$PATH'
       become: false
       tags: path
+    - name: Install oh_my_zsh themes
+      ansible.builtin.git:
+        repo: 'https://github.com/romkatv/powerlevel10k.git'
+        dest: "/home/{{ user }}/.oh-my-zsh/custom/themes/powerlevel10k"
+      become: false
+    - name: Install oh_my_zsh plugin zsh-syntax-highlighting
+      ansible.builtin.git:
+        repo: 'https://github.com/zsh-users/zsh-syntax-highlighting.git'
+        dest: "/home/{{ user }}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
+        force: true
+      become: false
+    - name: Install oh_my_zsh plugin zsh-autosuggestions
+      ansible.builtin.git:
+        repo: 'https://github.com/zsh-users/zsh-autosuggestions.git'
+        dest: "/home/{{ user }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+        force: true
+      become: false
+    - name: Add plugin to .zshrc
+      ansible.builtin.lineinfile:
+        path: "/home/{{ user }}/.zshrc"
+        regexp: '^plugins=.*$'
+        line: 'plugins=(git gcloud docker kubectl colored-man-pages ansible asdf aws ubuntu direnv docker-compose zsh-syntax-highlighting zsh-autosuggestions helm pip poetry python ripgrep sudo terraform vagrant vault zsh-interactive-cd)'
+      become: false
+    - name: change theme zshrc
+      ansible.builtin.lineinfile:
+        path: "/home/{{ user }}/.zshrc"
+        regexp: '^ZSH_THEME=.*$'
+        line: 'ZSH_THEME="powerlevel10k/powerlevel10k"'
+      become: false
+
     - name: add PATH
       ansible.builtin.lineinfile:
         path: "/home/{{ user }}/.zshrc"
@@ -139,7 +168,6 @@
         line: '\1\3:{{ item }}\5'
         backrefs: yes
       loop:
-        - "$HOME/.arkade/bin"
         - "$HOME/.local/bin"
         - "$HOME/.asdf/bin"
       tags: path
@@ -150,7 +178,7 @@
       become: false
       tags: pip
     - name: Install regula
-      ansible.builtin.shell: wget https://github.com/fugue/regula/releases/download/v2.4.0/regula_2.4.0_Linux_x86_64.tar.gz -O - | sudo tar -xz -C /usr/local/bin
+      ansible.builtin.shell: wget https://github.com/fugue/regula/releases/download/v2.9.1/regula_2.9.1_Linux_x86_64.tar.gz -O - | sudo tar -xz -C /usr/local/bin
       tags: regula
     - name: install Azure cli
       ansible.builtin.shell: curl -sL https://aka.ms/InstallAzureCLIDeb | bash
@@ -158,7 +186,7 @@
       ansible.builtin.git:
         repo: 'https://github.com/asdf-vm/asdf.git'
         dest: "/home/{{ user }}/.asdf"
-        version: v0.9.0
+        version: v0.10.2
       tags: asdf
       become: false
     - name: Add asdf to .zshrc
@@ -170,16 +198,6 @@
         - ". $HOME/.asdf/asdf.sh"
         - "fpath=(${ASDF_DIR}/completions $fpath)"
         - "autoload -Uz compinit && compinit"
-        - "source /usr/share/zplug/init.zsh"
-        - "zplug plugins/docker, from:oh-my-zsh"
-        - "zplug plugins/docker-compose, from:oh-my-zsh"
-        - "zplug plugins/git, from:oh-my-zsh"
-        - "zplug plugins/fzf, from:oh-my-zsh"
-        - "zplug romkatv/powerlevel10k, as:theme, depth:1"
-        - "zplug zsh-users/zsh-autosuggestions"
-        - "zplug zdharma/fast-syntax-highlighting, defer:2"
-        - "zplug install"
-        - "zplug load"
       tags: asdf
       become: false
     - name: Add plugin asdf
