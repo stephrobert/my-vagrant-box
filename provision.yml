@@ -87,6 +87,7 @@
           - language-pack-fr
           - net-tools
           - vagrant
+          - fzf
         update_cache: true
       tags: packages
     - name: Change local to FR
@@ -131,7 +132,7 @@
         line: 'export PATH=$HOME/.local/bin:$PATH'
       become: false
       tags: path
-    - name: Install oh_my_zsh themes
+    - name: Install oh_my_zsh theme
       ansible.builtin.git:
         repo: 'https://github.com/romkatv/powerlevel10k.git'
         dest: "/home/{{ user }}/.oh-my-zsh/custom/themes/powerlevel10k"
