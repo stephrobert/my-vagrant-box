@@ -152,7 +152,7 @@
       ansible.builtin.lineinfile:
         path: "/home/{{ user }}/.zshrc"
         regexp: '^plugins=.*$'
-        line: 'plugins=(git gcloud docker kubectl colored-man-pages ansible asdf aws ubuntu direnv docker-compose zsh-syntax-highlighting zsh-autosuggestions helm pip poetry python ripgrep sudo terraform vagrant vault zsh-interactive-cd)'
+        line: 'plugins=(git gcloud docker kubectl colored-man-pages ansible asdf aws ubuntu direnv fzf docker-compose zsh-syntax-highlighting zsh-autosuggestions helm pip poetry python ripgrep sudo terraform vagrant vault zsh-interactive-cd)'
       become: false
     - name: change theme zshrc
       ansible.builtin.lineinfile:
