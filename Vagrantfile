@@ -3,7 +3,7 @@
 
 $script = <<-SCRIPT
 echo I am provisioning...
-sudo sed 's@mirrors.kernel.org@ubuntu.lafibre.info@' -i /etc/apt/sources.list
+sed 's@mirrors.kernel.org@ubuntu.lafibre.info@' -i /etc/apt/sources.list
 apt update -y
 apt dist-upgrade -y
 apt install python3-pip git -y
@@ -19,7 +19,7 @@ git clone https://github.com/stephrobert/my-vagrant-box.git
 SCRIPT
 
 Vagrant.configure("2") do |config|
-    config.vm.box = "generic/ubuntu2110"
+    config.vm.box = "generic/ubuntu2204"
     config.vm.define 'devboxes' do |node|
         node.vm.hostname = 'devboxes'
     end
