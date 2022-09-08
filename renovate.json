@@ -4,5 +4,7 @@
   "pip-compile": {
     "enabled": true,
     "fileMatch": ["(^|/)requirements\\.in$"]
-  }
+  },
+  "timezone": "Europe/Paris",
+  "schedule": "before 5am every day"
 }
