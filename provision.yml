@@ -175,11 +175,6 @@
         - "$HOME/.asdf/bin"
       tags: path
       become: false
-    - name: Install pip packages
-      ansible.builtin.pip:
-        requirements: "/home/{{ user }}/my-vagrant-box/requirements.txt"
-      become: false
-      tags: pip
     - name: Install regula
       ansible.builtin.shell: wget https://github.com/fugue/regula/releases/download/v2.9.1/regula_2.9.1_Linux_x86_64.tar.gz -O - | sudo tar -xz -C /usr/local/bin
       tags: regula
@@ -231,6 +226,15 @@
         - black
         - pipdeptree
         - poetry
+    - name: compile python requirements
+      ansible.builtin.shell:
+        "zsh -lc '/home/{{ user }}/.local/bin/pip-compile requirements.in'"
+      tags: pip-compile
+    - name: Install pip packages
+      ansible.builtin.pip:
+        requirements: "/home/{{ user }}/my-vagrant-box/requirements.txt"
+      become: false
+      tags: pip
 
   handlers:
     - name: dpkg-reconfigure
