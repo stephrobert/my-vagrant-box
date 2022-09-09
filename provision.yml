@@ -226,10 +226,6 @@
         - black
         - pipdeptree
         - poetry
-    - name: compile python requirements
-      ansible.builtin.shell:
-        "zsh -lc '/home/{{ user }}/.local/bin/pip-compile requirements.in'"
-      tags: pip-compile
     - name: Install pip packages
       ansible.builtin.pip:
         requirements: "/home/{{ user }}/my-vagrant-box/requirements.txt"
