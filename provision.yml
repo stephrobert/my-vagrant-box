@@ -39,16 +39,17 @@
       ansible.builtin.stat:
         path: /swapfile
       register: swap_file_check
+      when: ansible_virtualization_type != "docker"
     - name: Umount swap | {{ inventory_hostname }}
       ansible.posix.mount:
         name: swap
         fstype: swap
         state: absent
-      when: swap_file_check.stat.exists
+      when: ansible_virtualization_type != "docker" and swap_file_check.stat.exists
     - name: Swap Off | {{ inventory_hostname }}
       ansible.builtin.shell:
         cmd: swapoff -a
-      when: ansible_swaptotal_mb > 0
+      when: ansible_virtualization_type != "docker" and ansible_swaptotal_mb > 0
     - name: Add Docker GPG key
       ansible.builtin.apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
