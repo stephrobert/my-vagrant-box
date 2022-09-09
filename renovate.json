@@ -6,20 +6,12 @@
   "rebaseWhen": "behind-base-branch",
   "addLabels": ["dependencies"],
   "dependencyDashboard": true,
-  "dependencyDashboardAutoclose": true,
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "rebaseWhen": "behind-base-branch",
       "addLabels": ["renovate"]
-    },
-    {
-      "description": "docker images",
-      "matchLanguages": ["docker"],
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
-      "rebaseWhen": "behind-base-branch",
-      "addLabels": ["renovate"],
-      "automerge": "true"
     }
-  ]
+  ],
+  "schedule": ["every weekday"]
 }
