@@ -4,7 +4,7 @@ ansible-lint==6.6.0
 ansible-navigator==2.1.0
 ansible-runner==2.2.1
 debugpy==1.6.3
-google-auth==2.11.0
+google-auth==2.11.1
 jc==1.21.2
 lastversion==2.4.5
 molecule==4.0.1
