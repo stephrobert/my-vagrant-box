@@ -1,7 +1,7 @@
 ---
 - name: Install Devopsbox
-  hosts: all
-  # connection: local
+  hosts: localhost
+  connection: local
   gather_facts: true
   become: true
   vars:
