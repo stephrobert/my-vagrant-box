@@ -1,7 +1,7 @@
 ---
 - name: Install Devopsbox
-  hosts: localhost
-  connection: local
+  hosts: all
+  # connection: local
   gather_facts: true
   become: true
   vars:
@@ -10,8 +10,9 @@
       - { name: awscli, version: 2.7.34 }
       - { name: bat, version: 0.22.1 }
       - { name: direnv, version: 2.32.1 }
-      - { name: exa, version: 0.10.1}
+      - { name: exa, version: 0.10.1 }
       - { name: docker-compose-v1, version: v2.9.0 }
+      - { name: direnv, version: 2.32.1 }
       - { name: helm, version: 3.9.4 }
       - { name: kubectl, version: 1.25.0 }
       - { name: gohugo, version: 0.103.1 }
@@ -53,58 +54,11 @@
       ansible.builtin.shell:
         cmd: swapoff -a
       when: ansible_virtualization_type != "docker" and ansible_swaptotal_mb > 0
-    - name: Download Docker GPG key
-      ansible.builtin.get_url:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        dest: /etc/apt/trusted.gpg.d/docker.asc
-        mode: 0644
-    - name: Add Docker repository
-      ansible.builtin.apt_repository:
-        repo: deb [arch=amd64] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
-        state: present
-        update_cache: false
-    - name: Download Hashicorp GPG key
-      ansible.builtin.get_url:
-        url: https://apt.releases.hashicorp.com/gpg
-        dest: /etc/apt/trusted.gpg.d/hashicorp.asc
-        mode: 0644
-    - name: Add Hashicorp repository
-      ansible.builtin.apt_repository:
-        repo: deb [arch=amd64] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main
-        state: present
-        update_cache: false
-    - name: Install Packages
-      ansible.builtin.apt:
-        name:
-          - qemu-kvm
-          - btop
-          - libvirt-daemon-system
-          - docker-ce
-          - ksmtuned
-          - zsh
-          - libvirt-clients
-          - libxslt-dev
-          - libxml2-dev
-          - libvirt-dev
-          - zlib1g-dev
-          - ruby-dev
-          - ruby-libvirt
-          - ebtables
-          - keyboard-configuration
-          - console-setup
-          - language-pack-fr
-          - net-tools
-          - vagrant
-          - fzf
-          - pipx
-          - pipenv
-        update_cache: true
-      tags: packages
-    - name: Change local to FR
-      community.general.locale_gen:
-        name: fr_FR.UTF-8
-        state: present
-      tags: local
+    - name: Import tasks to install package for {{ ansible_os_family | lower }} distribution
+      ansible.builtin.include_tasks: "{{ ansible_os_family | lower }}.yml"
+    - name: Set timezone
+      community.general.timezone:
+        name: "Europe/Paris"
     - name: configure keyboard
       ansible.builtin.copy:
         src: "files/{{ item }}"
@@ -183,11 +137,6 @@
         - "$HOME/.asdf/bin"
       tags: path
       become: false
-    - name: Install regula
-      ansible.builtin.shell: wget https://github.com/fugue/regula/releases/download/v2.9.1/regula_2.9.1_Linux_x86_64.tar.gz -O - | sudo tar -xz -C /usr/local/bin
-      tags: regula
-    - name: install Azure cli
-      ansible.builtin.shell: curl -sL https://aka.ms/InstallAzureCLIDeb | bash
     - name: Install asdf
       ansible.builtin.git:
         repo: 'https://github.com/asdf-vm/asdf.git'
