@@ -1,0 +1,44 @@
+---
+- hosts: all
+  gather_facts: no
+  become: true
+
+  # Vagrant provison runs this file, so you don't actually need an inventory
+  # it does that for you.
+  # Basically we setup a bunch of environment stuff so we can ssh into the host
+  # Using all the data from all.yml
+
+  tasks:
+  - name: Allow password authentication
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: "^PasswordAuthentication"
+      line: "PasswordAuthentication yes"
+      state: present
+    notify: restart sshd
+
+  - name: Set authorized key took from file
+    authorized_key:
+      user: vagrant
+      state: present
+      key: "{{ lookup('file', '/home/vagrant/.ssh/id_rsa.pub') }}"
+  - name: Create my-vagrant-box folder
+    ansible.builtin.file:
+      name: /home/vagrant/my-vagrant-box
+      state: directory
+      owner: vagrant
+      group: vagrant
+      mode: 0755
+  - name: Copy requirements.txt
+    ansible.builtin.copy:
+      src: ../requirements.txt
+      dest: /home/vagrant/my-vagrant-box
+      owner: vagrant
+      group: vagrant
+      mode: 0640
+
+  handlers:
+  - name: restart sshd
+    service:
+      name: sshd
+      state: restarted

@@ -23,11 +23,11 @@ SCRIPT
 
 Vagrant.configure("2") do |config|
     config.vm.box = "generic/ubuntu2204"
-    config.vm.define 'devboxes' do |node|
-        node.vm.hostname = 'devboxes'
+    config.vm.define 'devbox' do |node|
+        node.vm.hostname = 'devbox'
     end
     config.vm.provider "hyperv" do |hyperv|
-        hyperv.vmname = "devboxes"
+        hyperv.vmname = "devbox"
         hyperv.cpus = 6
         hyperv.memory = 4096
         hyperv.maxmemory = 8192

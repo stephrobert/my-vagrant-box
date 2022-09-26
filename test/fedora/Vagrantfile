@@ -1,0 +1,21 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+$script = <<-SCRIPT
+echo I am provisioning...
+dnf update -y
+dnf install python3-pip -y
+SCRIPT
+
+Vagrant.configure("2") do |config|
+  config.hostmanager.enabled = true
+  config.hostmanager.manage_host = true
+  config.hostmanager.manage_guest = true
+  config.vm.box = "generic/fedora36"
+  config.vm.hostname = "vagrant-test"
+  config.vm.provision "ansible" do |a|
+    a.playbook = "../provision-playbook.yml"
+  end
+  config.vm.provision "shell", inline: $script
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+end
