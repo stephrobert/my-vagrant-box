@@ -31,7 +31,7 @@
       - { name: nomad, version: 1.3.5 }
       - { name: packer, version: 1.8.3 }
       - { name: popeye, version: v0.10.1 }
-      - { name: polaris, version: 7.1.5 }
+      - { name: polaris, version: 7.1.4 }
       - { name: rclone, version: 1.59.2 }
       - { name: tekton-cli, version: 0.26.0 }
       - { name: terraform, version: 1.3.0 }
