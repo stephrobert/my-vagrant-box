@@ -32,6 +32,8 @@
       - ksmtuned
       - libvirt-daemon-kvm
       - libvirt-client
+      - virt-install
+      - libvirt-devel
       - vagrant-libvirt
       - ruby-devel
       - rubygem-ruby-libvirt
