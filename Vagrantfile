@@ -1,28 +1,11 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-$script = <<-SCRIPT
-echo I am provisioning...
-apt update -y
-apt install python3-pip git -y
-pip3 install apt-select
-apt-select --country FR
-mv /home/vagrant/sources.list /etc/apt/sources.list
-apt update -y
-apt dist-upgrade -y
-SCRIPT
-
-$script2 = <<-SCRIPT
-pip install ansible --user
-git config --global user.email "adresse@gmail.com"
-git config --global user.name "Prénom NOM"
-git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
-git clone https://github.com/stephrobert/my-vagrant-box.git
-/home/vagrant/.local/bin/ansible-playbook /home/vagrant/my-vagrant-box/provision.yml
-SCRIPT
+$distrib = ENV['DISTRIB'] || 'ubuntu2204'
+$script_name = "scripts/%s.sh" % $distrib
 
 Vagrant.configure("2") do |config|
-    config.vm.box = "generic/ubuntu2204"
+    config.vm.box = "generic/%s" % $distrib
     config.vm.define 'devbox' do |node|
         node.vm.hostname = 'devbox'
     end
@@ -35,8 +18,11 @@ Vagrant.configure("2") do |config|
         hyperv.enable_virtualization_extensions = true
         hyperv.linked_clone = true
     end
-  config.vm.provision "shell", inline: $script
-  config.vm.provision "shell", inline: $script2, privileged: false
+    config.vm.provider "libvirt" do |libvirt|
+        libvirt.memory = 4096
+        libvirt.cpus = 6
+    end
+  config.vm.provision "shell", path: $script_name
+  config.vm.provision "shell", path: "scripts/install-ansible.sh", privileged: false
   config.vm.synced_folder ".", "/vagrant", disabled: true
-
 end
