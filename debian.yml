@@ -52,3 +52,10 @@
   tags: local
 - name: install Azure cli
   ansible.builtin.shell: curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+
+- name: dpkg-reconfigure
+  shell: |
+    dpkg-reconfigure -f noninteractive keyboard-configuration && \
+    localectl set-locale LANG=fr_FR.UTF8 LANGUAGE=fr_FR.UTF8 && \
+    timedatectl set-timezone Europe/Paris && \
+    update-locale LANG=fr_FR.UTF-8
