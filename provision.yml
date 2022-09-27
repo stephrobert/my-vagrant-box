@@ -172,10 +172,6 @@
       with_items: "{{ devops_tools }}"
       become: false
       tags: asdf
-    - name: Install vagrant plugin libvirt
-      ansible.builtin.shell: vagrant plugin install vagrant-libvirt
-      become: false
-      tags: vagrant
     - name: pipx
       community.general.pipx:
         name: "{{ item }}"
@@ -193,3 +189,7 @@
         requirements: "/home/{{ user }}/my-vagrant-box/requirements.txt"
       become: false
       tags: pip
+    - name: Install vagrant plugin libvirt
+      ansible.builtin.shell: vagrant plugin install vagrant-libvirt
+      become: false
+      tags: vagrant
