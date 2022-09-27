@@ -190,6 +190,9 @@
       become: false
       tags: pip
     - name: Install vagrant plugin libvirt
-      ansible.builtin.shell: vagrant plugin install vagrant-libvirt
+      ansible.builtin.shell: "vagrant plugin install {{ item }}"
       become: false
       tags: vagrant
+      with_items:
+        - vagrant-libvirt
+        - vagrant-hostmanager
