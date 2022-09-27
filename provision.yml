@@ -56,7 +56,7 @@
       ansible.builtin.shell:
         cmd: swapoff -a
       when: ansible_virtualization_type != "docker" and ansible_swaptotal_mb > 0
-    - name: configure keyboard
+    - name: Configure keyboard
       ansible.builtin.copy:
         src: "files/{{ item }}"
         dest: "/etc/default/{{ item }}"
@@ -89,7 +89,7 @@
       ansible.builtin.shell: curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | sh
       tags: zsh
       when: not ohmyzsh_file_check.stat.exists
-    - name: uncomment PATH
+    - name: Uncomment PATH
       ansible.builtin.lineinfile:
         path: "/home/{{ user }}/.zshrc"
         regexp: '^# export PATH.*$'
@@ -100,12 +100,14 @@
       ansible.builtin.git:
         repo: 'https://github.com/romkatv/powerlevel10k.git'
         dest: "/home/{{ user }}/.oh-my-zsh/custom/themes/powerlevel10k"
+        version: HEAD
       become: false
     - name: Install oh_my_zsh plugin zsh-syntax-highlighting
       ansible.builtin.git:
         repo: 'https://github.com/zsh-users/zsh-syntax-highlighting.git'
         dest: "/home/{{ user }}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
-        force: true
+        force:
+        version: HEAD
       become: false
     - name: Install oh_my_zsh plugin zsh-autosuggestions
       ansible.builtin.git:
@@ -174,6 +176,7 @@
       ansible.builtin.shell: vagrant plugin install vagrant-libvirt
       become: false
       tags: vagrant
+      when: ansible_os_family in ['debian']
     - name: pipx
       community.general.pipx:
         name: "{{ item }}"
@@ -191,4 +194,3 @@
         requirements: "/home/{{ user }}/my-vagrant-box/requirements.txt"
       become: false
       tags: pip
-
