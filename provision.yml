@@ -16,7 +16,7 @@
       - { name: helm, version: 3.9.4 }
       - { name: kubectl, version: 1.25.0 }
       - { name: glab, version: 1.22.0 }
-      - { name: gitub-cli, version: 2.16.1 }
+      - { name: github-cli, version: 2.16.1 }
       - { name: gohugo, version: 0.103.1 }
       - { name: hadolint, version: 2.10.0 }
       - { name: jq, version: 1.6 }
