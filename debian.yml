@@ -52,7 +52,6 @@
   tags: local
 - name: install Azure cli
   ansible.builtin.shell: curl -sL https://aka.ms/InstallAzureCLIDeb | bash
-
 - name: dpkg-reconfigure
   shell: |
     dpkg-reconfigure -f noninteractive keyboard-configuration && \
