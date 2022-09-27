@@ -3,7 +3,7 @@
 Ce projet permet d'installer pas mal d'outils Devops, avec ansible, soit dans :
 
 - une instance hyper-v sous Windows
-- une machine tournant déjà sous Ubuntu 22.04 ou Fedora 36 (d'autres
+- une machine tournant déjà sous Ubuntu 22.04 ou Fedora 36 ou Arch Linux (d'autres
   distributions vont suivre dans les prochaines semaines)
 
 Une liste non exhaustive des principaux outils installés :
