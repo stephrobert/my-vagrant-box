@@ -176,7 +176,6 @@
       ansible.builtin.shell: vagrant plugin install vagrant-libvirt
       become: false
       tags: vagrant
-      when: ansible_os_family in ['debian']
     - name: pipx
       community.general.pipx:
         name: "{{ item }}"
