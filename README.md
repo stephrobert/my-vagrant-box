@@ -20,7 +20,7 @@ Une liste non exhaustive des principaux outils installés :
 - [Kind](/post/kubernetes-kind/) et Minikube pour installer un [cluster
   Kubernetes](/post/introduction-kubernetes/) rapidement.
 
-On retrouve également toute une série d'outils:
+On retrouve également toute une série d'outils :
 
 - [regula](/post/infra-as-code-policy-check-regula/),
 - [polaris, popeye](/post/kubernetes-ecriture-manifests/),
