@@ -56,11 +56,6 @@
       ansible.builtin.shell:
         cmd: swapoff -a
       when: ansible_virtualization_type != "docker" and ansible_swaptotal_mb > 0
-    - name: Import tasks to install package for {{ ansible_os_family | lower }} distribution
-      ansible.builtin.include_tasks: "{{ ansible_os_family | lower }}.yml"
-    - name: Set timezone
-      community.general.timezone:
-        name: "Europe/Paris"
     - name: configure keyboard
       ansible.builtin.copy:
         src: "files/{{ item }}"
@@ -72,8 +67,11 @@
       loop:
         - keyboard
         - locale
-      notify:
-        - dpkg-reconfigure
+    - name: Import tasks to install package for {{ ansible_os_family | lower }} distribution
+      ansible.builtin.include_tasks: "{{ ansible_os_family | lower }}.yml"
+    - name: Set timezone
+      community.general.timezone:
+        name: "Europe/Paris"
       tags: keyboard
     - name: Add user to groups
       ansible.builtin.user:
@@ -194,10 +192,3 @@
       become: false
       tags: pip
 
-  handlers:
-    - name: dpkg-reconfigure
-      shell: |
-        dpkg-reconfigure -f noninteractive keyboard-configuration && \
-        localectl set-locale LANG=fr_FR.UTF8 LANGUAGE=fr_FR.UTF8 && \
-        timedatectl set-timezone Europe/Paris && \
-        update-locale LANG=fr_FR.UTF-8
