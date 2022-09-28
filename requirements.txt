@@ -5,7 +5,7 @@ ansible-navigator==2.1.0
 ansible-runner==2.2.1
 debugpy==1.6.3
 google-auth==2.11.1
-jc==1.21.2
+jc==1.22.0
 lastversion==2.4.5
 molecule==4.0.1
 molecule-docker==2.0.0
