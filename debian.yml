@@ -43,6 +43,7 @@
       - fzf
       - pipx
       - pipenv
+      - ripgrep
     update_cache: true
   tags: packages
 - name: Change local to FR
