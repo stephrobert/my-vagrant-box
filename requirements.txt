@@ -4,7 +4,7 @@ ansible-lint==6.8.2
 ansible-navigator==2.2.0
 ansible-runner==2.2.1
 debugpy==1.6.3
-google-auth==2.12.0
+google-auth==2.13.0
 hvac==1.0.2
 jc==1.22.0
 lastversion==2.4.5
