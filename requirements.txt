@@ -8,7 +8,7 @@ google-auth==2.12.0
 hvac==1.0.2
 jc==1.22.0
 lastversion==2.4.5
-molecule==4.0.1
+molecule==4.0.2
 molecule-docker==2.1.0
 pytest-testinfra==6.8.0
 pipx==1.1.0
