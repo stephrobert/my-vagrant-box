@@ -1,6 +1,6 @@
 ansible==6.5.0
 ansible-builder==1.1.0
-ansible-lint==6.8.3
+ansible-lint==6.8.4
 ansible-navigator==2.2.0
 ansible-runner==2.2.1
 debugpy==1.6.3
