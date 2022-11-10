@@ -6,7 +6,7 @@ ansible-runner==2.3.0
 debugpy==1.6.3
 google-auth==2.14.1
 hvac==1.0.2
-jc==1.22.1
+jc==1.22.2
 lastversion==2.4.7
 molecule==4.0.3
 molecule-docker==2.1.0
