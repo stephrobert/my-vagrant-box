@@ -13,6 +13,12 @@ Vagrant.configure("2") do |config|
   config.hostmanager.manage_guest = true
   config.vm.box = "generic/fedora36"
   config.vm.hostname = "vagrant-test"
+  config.vm.provider "libvirt" do |v|
+    v.management_network_name = "my_network"
+    v.management_network_address = "10.11.12.0/24"
+  end
+
+
   config.vm.provision "ansible" do |a|
     a.playbook = "../provision-playbook.yml"
   end
