@@ -8,24 +8,24 @@ Ce projet permet d'installer pas mal d'outils Devops, avec ansible, soit dans :
 
 Une liste non exhaustive des principaux outils installés :
 
-- [Docker](/post/introduction-docker/) accompagné de docker-compose, hadolint, trivy et buildx
-- [Vagrant/Libvirt](/post/introduction-vagrant/) pour jouer toutes les démos que je partage
-- [Terraform](/post/introduction-terraform/) et quelques outils : tfsec (je dois compléter)
-- [Ansible](/post/introduction-ansible/) accompagné de:
-  - [ansible-lint](/post/ansible-check-lint/),
-  - [ansible-runner, ansible-builder](/post/ansible-execution-environnement-runner-builder/),
-  - [jc](/post/ansible-parse-command-with-jc/),
-  - [ansible-navigator](/post/ansible-navigator/)
-  - et la [cli AWX/Tower](/post/ansible-cli-tower-gitlab-ci-cd/)
-- [Kind](/post/kubernetes-kind/) et Minikube pour installer un [cluster
-  Kubernetes](/post/introduction-kubernetes/) rapidement.
+- [Docker](https://blog.stephane-robert.info/post/introduction-docker/) accompagné de docker-compose, hadolint, trivy et buildx
+- [Vagrant/Libvirt](https://blog.stephane-robert.info/post/introduction-vagrant/) pour jouer toutes les démos que je partage
+- [Terraform](https://blog.stephane-robert.info/post/introduction-terraform/) et quelques outils : tfsec (je dois compléter)
+- [Ansible](https://blog.stephane-robert.info/post/introduction-ansible/) accompagné de:
+  - [ansible-lint](https://blog.stephane-robert.info/post/ansible-check-lint/),
+  - [ansible-runner, ansible-builder](https://blog.stephane-robert.info/post/ansible-execution-environnement-runner-builder/),
+  - [jc](https://blog.stephane-robert.info/post/ansible-parse-command-with-jc/),
+  - [ansible-navigator](https://blog.stephane-robert.info/post/ansible-navigator/)
+  - et la [cli AWX/Tower](https://blog.stephane-robert.info/post/ansible-cli-tower-gitlab-ci-cd/)
+- [Kind](https://blog.stephane-robert.info/post/kubernetes-kind/) et Minikube pour installer un [cluster
+  Kubernetes](https://blog.stephane-robert.info/post/introduction-kubernetes/) rapidement.
 
 On retrouve également toute une série d'outils :
 
-- [regula](/post/infra-as-code-policy-check-regula/),
-- [polaris, popeye](/post/kubernetes-ecriture-manifests/),
-- k9s, kubens, kubectx, [stern](/post/logs-plusieurs-pod/), ...
+- [regula](https://blog.stephane-robert.info/post/infra-as-code-policy-check-regula/),
+- [polaris, popeye](https://blog.stephane-robert.info/post/kubernetes-ecriture-manifests/),
+- k9s, kubens, kubectx, [stern](https://blog.stephane-robert.info/post/logs-plusieurs-pod/), ...
 - Les cli des clouders : AWX, GCP et Azure
-- Quelques outils : lastversion, [asdf le choco du devops](/post/devops-asdf-tools/), yq et jq
+- Quelques outils : lastversion, [asdf le choco du devops](https://blog.stephane-robert.info/post/devops-asdf-tools/), yq et jq
 
 Tout est expliqué sur [ce billet de mon blog](https://blog.stephane-robert.info/post/configuration-devops-tools-2022/)
