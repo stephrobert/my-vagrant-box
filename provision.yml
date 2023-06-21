@@ -106,7 +106,7 @@
       ansible.builtin.git:
         repo: 'https://github.com/zsh-users/zsh-syntax-highlighting.git'
         dest: "/home/{{ user }}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
-        force:
+        force: true
         version: HEAD
       become: false
     - name: Install oh_my_zsh plugin zsh-autosuggestions
