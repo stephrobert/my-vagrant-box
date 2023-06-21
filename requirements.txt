@@ -12,5 +12,5 @@ molecule==4.0.4
 molecule-docker==2.1.0
 pytest-testinfra==7.0.0
 pipx==1.1.0
-molecule-vagrant==1.0.0
+molecule-vagrant==2.0.0
 molecule-goss==1.1
